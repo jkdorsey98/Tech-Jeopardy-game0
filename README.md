@@ -1,2 +1,257 @@
 # Tech-Jeopardy-game0
 Jeopardy style study game
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Jeopardy</title>
+    <style>
+        :root {
+            --jeopardy-blue: #060ce9;
+            --jeopardy-gold: #ffcc00;
+            --text-light: #ffffff;
+            --card-back: #1d1f7a;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #121212;
+            color: var(--text-light);
+            text-align: center;
+            margin: 0;
+            padding: 1em;
+        }
+
+        h1 {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 3.5em;
+            color: var(--text-light);
+            text-shadow: 3px 3px 0px var(--jeopardy-blue);
+            margin-bottom: 20px;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .category-title {
+            background-color: var(--jeopardy-blue);
+            color: var(--text-light);
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .point-value {
+            background-color: var(--card-back);
+            color: var(--jeopardy-gold);
+            font-size: 2.5em;
+            font-weight: bold;
+            padding: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+        }
+
+        .point-value:hover {
+            transform: scale(1.05);
+            background-color: var(--jeopardy-blue);
+        }
+        
+        .point-value.answered {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            font-size: 1.5em;
+        }
+        
+        .point-value.answered::after {
+            content: 'DONE';
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--jeopardy-blue);
+            margin: auto;
+            padding: 40px;
+            border: 2px solid var(--jeopardy-gold);
+            border-radius: 10px;
+            width: 80%;
+            max-width: 700px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .close-button {
+            color: var(--text-light);
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #question-display, #answer-display {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 2.5em;
+            line-height: 1.3;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        #answer-display {
+            color: var(--jeopardy-gold);
+            display: none; /* Initially hidden */
+        }
+        
+        #show-answer-button {
+            background-color: var(--jeopardy-gold);
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        #show-answer-button:hover {
+            background-color: #ffd84d;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Tech Jeopardy</h1>
+    <div id="game-board">
+        <div class="category-title">Connections</div>
+        <div class="category-title">Peripherals & Accessories</div>
+        <div class="category-title">The Hub</div>
+        <div class="category-title">Pointing & Tracking</div>
+
+        <div class="point-value" data-question="This type of connection uses an RJ-45 connector to physically plug your computer into a network for fast, stable internet. 💻" data-answer="What is an Ethernet connection?">100</div>
+        <div class="point-value" data-question="The most current, small, and reversible type of USB connector, found on everything from laptops to Android phones." data-answer="What is USB-C?">200</div>
+        <div class="point-value" data-question="This short-range wireless technology is used to pair devices like earbuds and smartwatches to your phone. 🎧" data-answer="What is Bluetooth?">300</div>
+        <div class="point-value" data-question="An acronym for 'Wireless Fidelity,' it's the standard used for connecting devices to the internet without cables." data-answer="What is Wi-Fi?">400</div>
+        <div class="point-value" data-question="This Apple-exclusive technology allows for high-speed data transfer and can power multiple high-resolution displays through a single port." data-answer="What is Thunderbolt?">500</div>
+
+        <div class="point-value" data-question="This device puts ink or toner on paper to create a hard copy of a digital document. 📄" data-answer="What is a printer?">100</div>
+        <div class="point-value" data-question="An external device used to store large amounts of data, like photos and videos, that connects via USB." data-answer="What is an external hard drive?">200</div>
+        <div class="point-value" data-question="This peripheral captures audio, making it essential for podcasting, voiceovers, and online calls. 🎤" data-answer="What is a microphone?">300</div>
+        <div class="point-value" data-question="This device digitizes physical photos and documents by using light to create a computer-readable image." data-answer="What is a scanner?">400</div>
+        <div class="point-value" data-question="This type of printer uses a heated printhead to create an image on special paper, often used for printing receipts." data-answer="What is a thermal printer?">500</div>
+        
+        <div class="point-value" data-question="A simple, inexpensive device that turns one USB port into many." data-answer="What is a USB hub?">100</div>
+        <div class="point-value" data-question="This device connects to a laptop to add ports like HDMI and SD card readers, but it typically doesn't provide power." data-answer="What is a port replicator?">200</div>
+        <div class="point-value" data-question="Unlike a simple hub, this type can provide its own power to run multiple high-draw devices like external hard drives." data-answer="What is a powered USB hub?">300</div>
+        <div class="point-value" data-question="A full-featured device that turns a laptop into a desktop computer by providing power and numerous ports with just one cable." data-answer="What is a docking station?">400</div>
+        <div class="point-value" data-question="The main advantage of using a docking station is transforming a portable laptop into a powerful desktop setup through this." data-answer="What is a single-cable connection?">500</div>
+
+        <div class="point-value" data-question="The most common pointing device for desktop computers, it moves a cursor across the screen as you slide it on a flat surface. 🖱️" data-answer="What is a mouse?">100</div>
+        <div class="point-value" data-question="A type of computer display that can detect the presence and location of a touch on its surface." data-answer="What is a touchscreen?">200</div>
+        <div class="point-value" data-question="This stationary pointing device has a ball on top that you roll with your thumb or fingers to move the cursor." data-answer="What is a trackball?">300</div>
+        <div class="point-value" data-question="An input device that allows for natural drawing and handwriting, it can sense different levels of pressure." data-answer="What is a stylus (or digital pen)?">400</div>
+        <div class="point-value" data-question="Modern computer mice use light instead of a physical ball to track movement, with this type being more precise than optical." data-answer="What is a laser mouse?">500</div>
+
+    </div>
+
+    <div id="qa-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="question-display"></div>
+            <button id="show-answer-button">Show Answer</button>
+            <div id="answer-display"></div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('qa-modal');
+        const questionDisplay = document.getElementById('question-display');
+        const answerDisplay = document.getElementById('answer-display');
+        const showAnswerButton = document.getElementById('show-answer-button');
+        const closeButton = document.querySelector('.close-button');
+        const pointCells = document.querySelectorAll('.point-value');
+        let currentAnswer = '';
+
+        pointCells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (cell.classList.contains('answered')) {
+                    return; // Do nothing if already answered
+                }
+                
+                // Get question and answer from data attributes
+                const question = cell.getAttribute('data-question');
+                currentAnswer = cell.getAttribute('data-answer');
+                
+                // Populate and show the modal
+                questionDisplay.textContent = question;
+                answerDisplay.textContent = currentAnswer;
+                answerDisplay.style.display = 'none';
+                showAnswerButton.style.display = 'block';
+                modal.style.display = 'flex';
+                
+                // Mark cell as answered
+                cell.classList.add('answered');
+                cell.innerHTML = ''; // Clear the point value
+            });
+        });
+
+        showAnswerButton.addEventListener('click', () => {
+            answerDisplay.style.display = 'block';
+            showAnswerButton.style.display = 'none';
+        });
+
+        const closeModal = () => {
+            modal.style.display = 'none';
+        };
+
+        closeButton.addEventListener('click', closeModal);
+        
+        // Also close modal if user clicks outside the content area
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                closeModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
