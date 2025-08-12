@@ -1,5 +1,3 @@
-# Tech-Jeopardy-game0
-Jeopardy style study game
 <!DOCTYPE html>
 <html lang="en">
 <head>
